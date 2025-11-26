@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { verifyEmail } from "@/actions/verify-email"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
     const searchParams = useSearchParams()
     const token = searchParams.get("token")
     const [error, setError] = useState<string | undefined>()
@@ -32,7 +32,7 @@ export default function VerifyEmailPage() {
     }, [token])
 
     return (
-        <div className="flex h-screen w-full flex-col items-center justify-center space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-4">
             <h1 className="text-2xl font-bold">Email Verification</h1>
             {!success && !error && <p>Verifying your email...</p>}
             {success && (
@@ -51,6 +51,16 @@ export default function VerifyEmailPage() {
                     </Link>
                 </div>
             )}
+        </div>
+    )
+}
+
+export default function VerifyEmailPage() {
+    return (
+        <div className="flex h-screen w-full flex-col items-center justify-center">
+            <Suspense fallback={<p>Loading...</p>}>
+                <VerifyEmailContent />
+            </Suspense>
         </div>
     )
 }
