@@ -18,6 +18,8 @@ import {
 import { signOut } from "next-auth/react"
 import { LogOut, Settings, User } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
+import router from "next/router"
+import Link from "next/link"
 
 type UserNavProps = {
     user: {
@@ -55,19 +57,19 @@ export function UserNav({ user }: UserNavProps) {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        {/* <DropdownMenuItem>
-                            <User className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
-                        </DropdownMenuItem> */}
+                        <Link href="/dashboard/settings">
+                            <DropdownMenuItem
+                            className="text-black-600 focus:text-grey-600 focus:bg-grey-50 dark:focus:bg-red-950/20"
+                            >
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Settings</span>
+                            </DropdownMenuItem>
+                            </Link>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
-                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        onClick={() => signOut({ callbackUrl: "/" })}
                     >
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Log out</span>

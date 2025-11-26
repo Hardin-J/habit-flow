@@ -9,23 +9,19 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-export async function sendReminderEmail(to: string, habitTitle: string) {
-  try {
-    await transporter.sendMail({
-      from: `"<${process.env.EMAIL_FROM_NAME}>" <${process.env.EMAIL_FROM}>`,
-      to,
-      subject: `⏰ Reminder: ${habitTitle}`,
-      html: `
-        <div style="font-family: sans-serif; padding: 20px;">
-          <h2>Time to build your habit!</h2>
-          <p>You set a reminder for <strong>${habitTitle}</strong>.</p>
-          <p>Don't break your streak. Log in now to mark it complete.</p>
-          <a href="${process.env.AUTH_URL}/dashboard" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Dashboard</a>
-        </div>
-      `,
-    })
-    console.log(`📧 Email sent to ${to} for ${habitTitle}`)
-  } catch (error) {
-    console.error("Email failed:", error)
+export const sendVerificationEmail = async (email: string, token: string) => {
+  const confirmLink = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/verify-email?token=${token}`
+
+  // If no email config, log it (for dev)
+  if (!process.env.EMAIL_SERVER_HOST) {
+    console.log("👉 [Email Mock] Verification Link:", confirmLink)
+    return
   }
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+    to: email,
+    subject: "Confirm your email",
+    html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
+  })
 }

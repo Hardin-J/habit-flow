@@ -1,10 +1,17 @@
 import { HabitLog } from "@prisma/client"
 
-export function calculateStreak(logs: HabitLog[]): number {
+export function calculateStreak(logs: HabitLog[], streakStartDate?: Date | null): number {
   if (!logs || logs.length === 0) return 0
 
+  // Filter logs if streakStartDate exists
+  const validLogs = streakStartDate
+    ? logs.filter(log => new Date(log.completedAt) >= new Date(streakStartDate))
+    : logs
+
+  if (validLogs.length === 0) return 0
+
   // 1. Sort logs by date (newest first)
-  const sortedLogs = logs.sort((a, b) => 
+  const sortedLogs = validLogs.sort((a, b) =>
     new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
   )
 
@@ -21,7 +28,7 @@ export function calculateStreak(logs: HabitLog[]): number {
   // If the user hasn't done it today yet, the streak shouldn't reset to 0 immediately,
   // it should just be the streak up to yesterday.
   const hasEntryToday = sortedLogs.some(log => isSameDay(new Date(log.completedAt), today))
-  
+
   if (!hasEntryToday) {
     currentCheckDate = yesterday
   }
@@ -29,7 +36,7 @@ export function calculateStreak(logs: HabitLog[]): number {
   // 3. Iterate backwards
   for (let i = 0; i < sortedLogs.length; i++) {
     const logDate = new Date(sortedLogs[i].completedAt)
-    
+
     // Check if this log matches the expected consecutive date
     if (isSameDay(logDate, currentCheckDate)) {
       streak++

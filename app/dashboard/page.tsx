@@ -5,13 +5,18 @@ import { AddHabitForm } from "@/components/habits/add-habit-form"
 import { calculateStreak } from "@/lib/streak"
 import { WeeklyChart } from "@/components/charts/weekly-chart"
 import { StatsOverview } from "@/components/dashboard/stats-overview" // We will create this next
-// import { auth } from "@/auth" // Fixed import path
 import { NotificationManager } from "@/components/layout/notification-manager"
 import { Achievements } from "@/components/gamification/achievements"
 import { Greeting } from "@/components/dashboard/greeting"
 import { DailyTip } from "@/components/dashboard/daily-tip"
 import { UserNav } from "@/components/user-nav"
-import { auth } from "../api/auth/[...nextauth]/auth"
+import { auth, signOut } from "../api/auth/[...nextauth]/auth"
+import { Plus, LayoutDashboard, BarChart3, Calendar, LogOut, CheckCircle2, Trophy, Flame, Settings } from "lucide-react"
+import Link from "next/link" // Added for the Link component
+import { Button } from "@/components/ui/button" // Added for the Button component
+
+import { HabitHeatmap } from "@/components/dashboard/habit-heatmap"
+import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard"
 
 export default async function DashboardPage() {
     const session = await auth()
@@ -44,7 +49,7 @@ export default async function DashboardPage() {
         if (completedToday) totalCompletedToday++
         totalLogs += habit.logs.length
 
-        const streak = calculateStreak(habit.logs)
+        const streak = calculateStreak(habit.logs, habit.streakStartDate)
         totalStreak += streak
 
         return {
@@ -87,6 +92,20 @@ export default async function DashboardPage() {
         }
     })
 
+    // 4. Transform for Heatmap (Last 365 Days)
+    const heatmapData = habitsData.reduce((acc: { date: string; count: number }[], habit) => {
+        habit.logs.forEach(log => {
+            const date = new Date(log.completedAt).toISOString().split('T')[0]
+            const existing = acc.find(d => d.date === date)
+            if (existing) {
+                existing.count++
+            } else {
+                acc.push({ date, count: 1 })
+            }
+        })
+        return acc
+    }, [])
+
     return (
         <div className="flex md:h-screen md:overflow-hidden flex-col bg-gray-50/50 dark:bg-zinc-950 transition-colors duration-500">
             <div className="flex-1 flex flex-col space-y-8 p-4 pt-6 md:p-6 md:overflow-hidden">
@@ -114,6 +133,8 @@ export default async function DashboardPage() {
                     />
                 </div>
 
+
+
                 {/* Main Content Grid - Scrollable Area */}
                 <div className="flex-1 grid gap-4 md:grid-cols-1 lg:grid-cols-7 min-h-0 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
                     {/* Left Column: Habits List - SCROLLABLE */}
@@ -133,7 +154,6 @@ export default async function DashboardPage() {
                                             viewBox="0 0 24 24"
                                             strokeWidth="1.5"
                                             stroke="currentColor"
-                                            className="h-full w-full"
                                         >
                                             <path
                                                 strokeLinecap="round"
@@ -157,10 +177,7 @@ export default async function DashboardPage() {
                     {/* Right Column: Analytics & Motivation - SCROLLABLE if needed, or fixed */}
                     <div className="col-span-3 flex flex-col gap-6 md:overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-zinc-800">
                         <div className="space-y-4">
-                            <h3 className="font-bold text-xl tracking-tight">Weekly Progress</h3>
-                            <div className="rounded-2xl border bg-card/50 text-card-foreground shadow-sm backdrop-blur-sm transition-all hover:shadow-md p-6">
-                                <WeeklyChart data={chartData} />
-                            </div>
+                            <AnalyticsDashboard habits={habits} />
                         </div>
 
                         {/* Dynamic Daily Tip */}

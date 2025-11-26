@@ -13,10 +13,11 @@ export async function createHabit(formData: FormData) {
     const reminderTime = formData.get("reminderTime") as string | null
 
     const rawData = {
-        title: formData.get("title"),
+        name: formData.get("name"),
         description: formData.get("description"),
         frequency: formData.get("frequency") || "daily",
-        reminderTime: reminderTime === "" ? undefined : reminderTime
+        reminderTime: reminderTime === "" ? undefined : reminderTime,
+        goal: formData.get("goal") ? parseInt(formData.get("goal") as string) : undefined
     }
 
     const validated = habitSchema.parse(rawData)
@@ -52,6 +53,8 @@ export async function toggleHabitAction(habitId: string) {
         }
     })
 
+    let badge = null
+
     if (existingLog) {
         // Untoggle (Delete)
         await prisma.habitLog.delete({ where: { id: existingLog.id } })
@@ -64,9 +67,31 @@ export async function toggleHabitAction(habitId: string) {
                 status: "completed"
             }
         })
+
+        // Check for Goal Completion
+        const habit = await prisma.habit.findUnique({
+            where: { id: habitId },
+            include: { logs: true }
+        })
+
+        if (habit && habit.goal && habit.logs.length === habit.goal) {
+            // Goal Reached!
+            badge = `Goal Reached: ${habit.name}`
+
+            // Add badge to user
+            await prisma.user.update({
+                where: { id: session.user.id },
+                data: {
+                    badges: {
+                        push: badge
+                    }
+                }
+            })
+        }
     }
 
     revalidatePath("/dashboard")
+    return { badge }
 }
 
 // --- Delete Habit ---
@@ -100,4 +125,45 @@ export async function updateHabitReminder(habitId: string, reminderTime: string 
     })
 
     revalidatePath("/dashboard")
+}
+
+// --- Update Habit ---
+export async function updateHabit(habitId: string, formData: FormData) {
+    const session = await auth()
+    if (!session?.user?.id) throw new Error("Unauthorized")
+
+    const name = formData.get("name") as string
+    const description = formData.get("description") as string
+    const goal = formData.get("goal") ? parseInt(formData.get("goal") as string) : null
+    const reminderTime = formData.get("reminderTime") as string
+
+    // Get current habit to check if goal changed
+    const currentHabit = await prisma.habit.findUnique({
+        where: { id: habitId, userId: session.user.id }
+    })
+
+    if (!currentHabit) throw new Error("Habit not found")
+
+    let streakStartDate = currentHabit.streakStartDate
+    let message = null
+
+    // Reset streak if goal changed
+    if (currentHabit.goal !== goal) {
+        streakStartDate = new Date() // Reset streak start to now
+        message = "Streak reset due to goal change."
+    }
+
+    await prisma.habit.update({
+        where: { id: habitId },
+        data: {
+            name,
+            description,
+            goal,
+            reminderTime: reminderTime === "" ? null : reminderTime,
+            streakStartDate
+        }
+    })
+
+    revalidatePath("/dashboard")
+    return { message }
 }

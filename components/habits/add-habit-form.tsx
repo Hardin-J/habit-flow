@@ -50,13 +50,25 @@ export function AddHabitForm() {
         </DialogDescription>
         <form action={handleSubmit} className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="title">Habit Title</Label>
-            <Input id="title" name="title" placeholder="e.g. Read 30 mins" required />
+            <Label htmlFor="name">Habit Name</Label>
+            <Input id="name" name="name" placeholder="e.g. Read 30 mins" required />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="description">Description (Optional)</Label>
             <Input id="description" name="description" placeholder="e.g. Atomic Habits" />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="goal">Goal (Target Completions)</Label>
+            <Input
+              id="goal"
+              name="goal"
+              type="number"
+              min="1"
+              placeholder="e.g. 30"
+            />
+            <p className="text-xs text-muted-foreground">Set a target number of completions to earn a badge.</p>
           </div>
 
           <div className="grid gap-2">

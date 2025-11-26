@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: "Track your habits, build your future.",
 };
 
+import { MouseFollower } from "@/components/ui/mouse-follower"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,6 +30,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <MouseFollower />
           {children}
           <Toaster />
         </ThemeProvider>

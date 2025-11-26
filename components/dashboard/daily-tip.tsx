@@ -27,11 +27,11 @@ export function DailyTip() {
     }, [])
 
     return (
-        <div className="group relative overflow-hidden h-1/2 rounded-2xl border bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-6 shadow-sm transition-all hover:shadow-md dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-pink-900/20">
+        <div className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-6 shadow-sm transition-all hover:shadow-md dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-pink-900/20">
             {/* Background Decor */}
             <div className="absolute -right-4 -top-2 h-12 w-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 opacity-10 blur-2xl transition-all group-hover:opacity-20" />
 
-            <div className="relative h-16 flex flex-col gap-3">
+            <div className="relative flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
                     <div className="rounded-full bg-indigo-100 p-1.5 dark:bg-indigo-900/50">
                         <Sparkles className="h-4 w-4" />

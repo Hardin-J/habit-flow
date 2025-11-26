@@ -13,8 +13,12 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  password      String?
   emailVerified DateTime?
   image         String?
+  dateOfBirth   DateTime?
+  isTwoFactorEnabled Boolean @default(false)
+  badges        String[] @default([])
   accounts      Account[]
   sessions      Session[]
   
@@ -26,10 +30,12 @@ model User {
 model Habit {
   id           String    @id @default(cuid())
   userId       String
-  title        String
+  name         String // Renamed from 'title'
   description  String?
-  frequency    String    @default("daily")
+  frequency    String    // daily, weekly (removed default("daily"))
   reminderTime String?   // Format: "HH:MM" (e.g., "08:30")
+  goal         Int?      // Target completions for a badge
+  streakStartDate DateTime? // When the current streak calculation starts
   
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
