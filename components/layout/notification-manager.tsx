@@ -5,7 +5,7 @@ import { toast } from "sonner"
 
 type HabitData = {
   id: string
-  title: string
+  name: string
   reminderTime?: string | null
   completedToday: boolean
 }
@@ -23,10 +23,10 @@ export function NotificationManager({ habits }: { habits: HabitData[] }) {
     const checkReminders = () => {
       const now = new Date()
       // Format current time as "HH:MM" (24-hour format)
-      const currentTime = now.toLocaleTimeString('en-GB', { 
-        hour: '2-digit', 
+      const currentTime = now.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
         minute: '2-digit',
-        hour12: false 
+        hour12: false
       })
 
       habits.forEach(habit => {
@@ -35,7 +35,7 @@ export function NotificationManager({ habits }: { habits: HabitData[] }) {
         // 2. Habit is NOT completed yet
         // 3. We haven't played the sound for this specific time/habit yet
         if (
-          habit.reminderTime === currentTime && 
+          habit.reminderTime === currentTime &&
           !habit.completedToday &&
           lastPlayedRef.current !== `${habit.id}-${currentTime}`
         ) {
@@ -44,7 +44,7 @@ export function NotificationManager({ habits }: { habits: HabitData[] }) {
           audio.play().catch(e => console.log("Audio play failed (interaction needed first)"))
 
           // B. Show Toast
-          toast("⏰ Time to " + habit.title, {
+          toast("⏰ Time to " + habit.name, {
             description: "It's " + habit.reminderTime + "! Don't break your streak.",
             action: {
               label: "Mark Done",
@@ -61,7 +61,7 @@ export function NotificationManager({ habits }: { habits: HabitData[] }) {
 
     // Run check every 30 seconds
     const interval = setInterval(checkReminders, 30 * 1000)
-    
+
     // Run immediately on mount
     checkReminders()
 
