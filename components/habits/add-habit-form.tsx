@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -44,27 +45,30 @@ export function AddHabitForm() {
         <DialogHeader>
           <DialogTitle>Create a new habit</DialogTitle>
         </DialogHeader>
+        <DialogDescription>
+          Add a new habit to track your daily progress.
+        </DialogDescription>
         <form action={handleSubmit} className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="title">Habit Title</Label>
             <Input id="title" name="title" placeholder="e.g. Read 30 mins" required />
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="description">Description (Optional)</Label>
             <Input id="description" name="description" placeholder="e.g. Atomic Habits" />
           </div>
 
           <div className="grid gap-2">
-             <Label htmlFor="reminder" className="flex items-center gap-2">
-               <Clock className="w-4 h-4" /> Daily Reminder Time
-             </Label>
-             <Input 
-               id="reminder" 
-               name="reminderTime" 
-               type="time" // HTML5 Time Picker
-               className="w-full"
-             />
+            <Label htmlFor="reminder" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" /> Daily Reminder Time
+            </Label>
+            <Input
+              id="reminder"
+              name="reminderTime"
+              type="time" // HTML5 Time Picker
+              className="w-full"
+            />
           </div>
 
           <DialogFooter>

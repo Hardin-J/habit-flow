@@ -2,6 +2,7 @@ import { Trophy, Medal, Flame, Star, Zap } from "lucide-react"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -71,23 +72,26 @@ export function Achievements({ habits }: { habits: any[] }) {
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-             <Trophy className="h-5 w-5 text-yellow-500" />
-             Your Trophy Cabinet
+            <Trophy className="h-5 w-5 text-yellow-500" />
+            Your Trophy Cabinet
           </DialogTitle>
+          <DialogDescription>
+            Unlock badges by maintaining streaks and consistency.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
           {/* Progress Bar */}
           <div className="mb-6 space-y-2">
             <div className="flex justify-between text-sm">
-                <span>Level {unlockedBadges.length}</span>
-                <span>{progress}% Complete</span>
+              <span>Level {unlockedBadges.length}</span>
+              <span>{progress}% Complete</span>
             </div>
             <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div 
-                    className="h-full bg-yellow-500 transition-all duration-1000" 
-                    style={{ width: `${progress}%` }}
-                />
+              <div
+                className="h-full bg-yellow-500 transition-all duration-1000"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
 
